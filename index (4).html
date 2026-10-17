@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reweara | Pre-Loved Fashion Marketplace</title>
+<meta name="description" content="Buy and sell pre-loved clothes on Reweara. Discover affordable, sustainable fashion.">
+<style>
+:root{--green:#193f36;--cream:#f7f5ed;--ink:#17362f}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;color:var(--ink);background:#fff}
+header{padding:16px 4%;display:flex;align-items:center;justify-content:space-between;
+gap:16px;flex-wrap:wrap;background:var(--cream);position:sticky;top:0;z-index:5}
+.logo{font-family:Georgia,serif;font-size:32px;font-weight:bold}
+.logo small{display:block;font:12px Arial}
+nav{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+button,.btn{cursor:pointer;border:0;border-radius:9px;padding:12px 17px;
+background:var(--green);color:white;font-weight:bold}
+input,select,textarea{padding:12px;border:1px solid #d6ddd8;border-radius:8px;
+font:inherit;max-width:100%;width:100%;margin:5px 0 12px}
+.hero{padding:55px 7%;min-height:300px;background:linear-gradient(90deg,#f1eee2 10%,#f1eee2dd 52%,#e4e7d9aa),url('https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1600&q=85') center/cover}
+.hero h1{font: bold clamp(36px,5vw,58px) Georgia,serif;max-width:570px;margin:14px 0}
+.hero p{max-width:470px;line-height:1.7}
+section{padding:28px 4%}
+.categories,.products{display:grid;gap:16px}
+.categories{grid-template-columns:repeat(4,1fr)}
+.category{background:var(--cream);padding:18px;text-align:center;border-radius:12px;cursor:pointer}
+.products{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{border:1px solid #e2e6e2;border-radius:10px;overflow:hidden}
+.card img{width:100%;height:190px;object-fit:cover;background:var(--cream)}
+.info{padding:12px}
+.info p{margin:8px 0}
+.price{font-weight:bold;font-size:17px}
+.muted{color:#62716b;font-size:13px}
+.actions{display:flex;gap:8px;margin-top:12px}
+.actions button{flex:1;padding:10px 5px;font-size:12px}
+.banner{background:#eef1e8;padding:22px;border-radius:12px;display:flex;
+justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.panel{max-width:650px;margin:15px auto;padding:22px;background:var(--cream);
+border-radius:14px}
+.hidden{display:none}
+footer{background:var(--green);color:white;padding:28px 4%;margin-top:25px}
+@media(max-width:850px){.products{grid-template-columns:repeat(2,minmax(0,1fr))}
+.categories{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){header{position:static}.logo{font-size:27px}
+.products{grid-template-columns:1fr 1fr}.card img{height:145px}
+.hero{padding:35px 5%}.info{padding:9px}.actions{flex-direction:column}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🌿 Reweara<small>Pre-Loved Fashion Marketplace</small></div>
+  <nav>
+    <button onclick="home()">Home</button>
+    <button onclick="showProducts()">Buy</button>
+    <button onclick="sell()">Sell Clothes</button>
+    <button onclick="orders()">My Orders (<span id="cartCount">0</span>)</button>
+  </nav>
+</header>
+
+<div id="homePage">
+  <div class="hero">
+    <p>BUY · SELL · GIVE CLOTHES A SECOND LIFE</p>
+    <h1>Good Clothes Deserve Another Life</h1>
+    <p>Discover beautiful pre-loved clothes at affordable prices.
+    Sell the clothes you no longer wear and support sustainable fashion.</p>
+    <button onclick="showProducts()">Shop Now →</button>
+    <button onclick="sell()" style="background:transparent;color:#193f36;border:1px solid #193f36">Start Selling</button>
+  </div>
+  <section>
+    <div class="categories">
+      <div class="category" onclick="filter('Shirts')">👕<p>Shirts</p></div>
+      <div class="category" onclick="filter('Jeans')">👖<p>Jeans</p></div>
+      <div class="category" onclick="filter('Salwar Kameez')">🌸<p>Salwar Kameez</p></div>
+      <div class="category" onclick="filter('Other')">♧<p>Other</p></div>
+    </div>
+  </section>
+</div>
+
+<section id="shop">
+  <h2>Featured Listings</h2>
+  <input id="search" placeholder="Search shirts, jeans, salwar kameez..."
+  oninput="render()">
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <select id="categoryFilter" onchange="render()" style="max-width:220px">
+      <option value="">All categories</option>
+      <option>Shirts</option><option>Jeans</option>
+      <option>Salwar Kameez</option><option>Other</option>
+    </select>
+    <button onclick="sell()">+ List Your Clothes</button>
+  </div>
+  <div class="products" id="products"></div>
+</section>
+
+<section id="sellPanel" class="hidden">
+ <div class="panel">
+  <h2>Sell Your Clothes</h2>
+  <p class="muted">Apne kapron ki details bhar kar listing banayein.</p>
+  <form id="sellForm">
+   <label>Product name</label><input id="pname" required placeholder="e.g. Blue Denim Jeans">
+   <label>Price (PKR)</label><input id="price" type="number" min="1" required placeholder="1800">
+   <label>Category</label><select id="cat"><option>Shirts</option><option>Jeans</option><option>Salwar Kameez</option><option>Other</option></select>
+   <label>Condition</label><select id="condition"><option>Good</option><option>Very Good</option><option>Like New</option></select>
+   <label>City</label><input id="city" required placeholder="Karachi, Lahore, Hyderabad...">
+   <label>Image URL (optional)</label><input id="photo" type="url" placeholder="https://...">
+   <label>Description</label><textarea id="desc" required placeholder="Kapray ki condition aur details..."></textarea>
+   <button type="submit">Publish Listing</button>
+   <button type="button" onclick="home()" style="background:#718079">Cancel</button>
+  </form>
+ </div>
+</section>
+
+<section id="ordersPanel" class="hidden">
+ <h2>My Orders / Saved Items</h2>
+ <p>Demo: product ko cart mein add karne par yahan dekhein.</p>
+ <div id="orderList"></div>
+ <p id="total" class="price"></p>
+ <button onclick="checkout()">Continue to Checkout</button>
+</section>
+
+<section>
+ <div class="banner">
+  <div><h3>Sell Your Clothes</h3>Turn pre-loved clothes into cash. Give fashion another life!</div>
+  <button onclick="sell()">Start Selling Now →</button>
+ </div>
+</section>
+
+<footer>
+ <h2>🌿 Reweara</h2>
+ <p>Pre-Loved Fashion Marketplace</p>
+ <p>Buy better. Sell smarter. Waste less.</p>
+ <small>© 2026 Reweara · Sustainable fashion for everyone</small>
+</footer>
+
+<script>
+const photos={
+ Jeans:"https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=700&q=80",
+ Shirts:"https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=700&q=80",
+ "Salwar Kameez":"https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=700&q=80",
+ Other:"https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=700&q=80"
+};
+let products=[
+ {id:1,name:"Classic Blue Denim Jeans",price:1800,cat:"Jeans",condition:"Good",city:"Lahore",desc:"Comfortable denim jeans in good condition.",img:photos.Jeans},
+ {id:2,name:"Classic White Shirt",price:950,cat:"Shirts",condition:"Very Good",city:"Karachi",desc:"Elegant white shirt, gently used.",img:photos.Shirts},
+ {id:3,name:"Elegant Salwar Kameez",price:2200,cat:"Salwar Kameez",condition:"Good",city:"Islamabad",desc:"Beautiful traditional outfit.",img:photos["Salwar Kameez"]},
+ {id:4,name:"Black Denim Jeans",price:1950,cat:"Jeans",condition:"Like New",city:"Lahore",desc:"Classic black jeans.",img:photos.Jeans},
+ {id:5,name:"Green Casual Shirt",price:1100,cat:"Shirts",condition:"Very Good",city:"Faisalabad",desc:"Casual shirt for everyday wear.",img:photos.Shirts},
+ {id:6,name:"Yellow Salwar Kameez",price:2000,cat:"Salwar Kameez",condition:"Good",city:"Multan",desc:"Colourful traditional outfit.",img:photos["Salwar Kameez"]}
+];
+let cart=[];
+function money(n){return "PKR "+Number(n).toLocaleString("en-PK")}
+function render(){
+ const q=(document.getElementById("search").value||"").toLowerCase();
+ const c=document.getElementById("categoryFilter").value;
+ const list=products.filter(p=>(p.name+" "+p.cat+" "+p.city).toLowerCase().includes(q)&&(!c||p.cat===c));
+ document.getElementById("products").innerHTML=list.map(p=>`
+ <article class="card">
+ <img src="${safe(p.img)}" alt="${safe(p.name)}" loading="lazy">
+ <div class="info"><span class="muted">${safe(p.condition)}</span>
+ <p><b>${safe(p.name)}</b></p><p class="price">${money(p.price)}</p>
+ <p class="muted">${safe(p.cat)} · ${safe(p.city)}</p>
+ <p class="muted">${safe(p.desc)}</p>
+ <div class="actions"><button onclick="details(${p.id})">View Details</button>
+ <button onclick="add(${p.id})">Add to Cart</button></div></div></article>`).join("")||"<p>No products found.</p>";
+}
+function safe(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function home(){document.getElementById("homePage").classList.remove("hidden");document.getElementById("shop").classList.remove("hidden");document.getElementById("sellPanel").classList.add("hidden");document.getElementById("ordersPanel").classList.add("hidden");window.scrollTo(0,0)}
+function showProducts(){home();document.getElementById("shop").scrollIntoView({behavior:"smooth"})}
+function sell(){document.getElementById("homePage").classList.add("hidden");document.getElementById("shop").classList.add("hidden");document.getElementById("ordersPanel").classList.add("hidden");document.getElementById("sellPanel").classList.remove("hidden");window.scrollTo(0,0)}
+function filter(c){document.getElementById("categoryFilter").value=c;showProducts();render()}
+function details(id){let p=products.find(x=>x.id===id);alert(p.name+"\\nPrice: "+money(p.price)+"\\nCondition: "+p.condition+"\\nCity: "+p.city+"\\n\\n"+p.desc)}
+function add(id){let p=products.find(x=>x.id===id);cart.push(p);document.getElementById("cartCount").textContent=cart.length;alert(p.name+" cart mein add ho gaya!")}
+function orders(){document.getElementById("homePage").classList.add("hidden");document.getElementById("shop").classList.add("hidden");document.getElementById("sellPanel").classList.add("hidden");document.getElementById("ordersPanel").classList.remove("hidden");document.getElementById("orderList").innerHTML=cart.map(p=>`<p>${safe(p.name)} — ${money(p.price)}</p>`).join("")||"<p>Cart abhi khaali hai.</p>";document.getElementById("total").textContent="Total: "+money(cart.reduce((s,p)=>s+p.price,0));window.scrollTo(0,0)}
+function checkout(){alert("Yeh demo checkout hai. Real orders aur payments ke liye secure backend aur payment setup zaroori hai.")}
+document.getElementById("sellForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ products.unshift({id:Date.now(),name:document.getElementById("pname").value.trim(),price:Number(document.getElementById("price").value),cat:document.getElementById("cat").value,condition:document.getElementById("condition").value,city:document.getElementById("city").value.trim(),desc:document.getElementById("desc").value.trim(),img:document.getElementById("photo").value.trim()||photos[document.getElementById("cat").value]||photos.Other});
+ e.target.reset();alert("Listing is demo mein publish ho gayi!");home();render();showProducts();
+});
+render();
+</script>
+</body>
+</html>
